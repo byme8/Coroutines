@@ -1,5 +1,3 @@
-
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +5,7 @@ using UnityEngine;
 
 namespace Coroutines
 {
-	public class CoroutineTask : CustomYieldInstruction
+    public class CoroutineTask : CustomYieldInstruction
 	{
 		private bool _keepWaiting = true;
 
@@ -29,7 +27,7 @@ namespace Coroutines
 	{
 		public static IEnumerator Wait(this IEnumerable<CoroutineTask> tasks)
 		{
-			foreach (var task in tasks)
+			foreach (var task in tasks.ToArray())
 				if (task.keepWaiting)
 					yield return task;
 		}

@@ -10,8 +10,8 @@ public class Test : MonoBehaviour
 
 	IEnumerator Start()
 	{
-		var time = 1;
-		var count = 10000;
+		var time = 50;
+		var count = 1000;
 		var cubes = new List<GameObject>();
 		for (int i = 0; i < count; i++)
 			cubes.Add(GameObject.CreatePrimitive(PrimitiveType.Cube));
@@ -19,7 +19,7 @@ public class Test : MonoBehaviour
 		yield return new WaitForSeconds(1);
 
 		yield return cubes.
-			Select(cube => cube.Move(GetRandomPosition(), time)).ToArray().Wait();
+			Select(cube => cube.Move(GetRandomPosition(), time)).Wait();
 
 		yield return new WaitForSeconds(1);
 
@@ -34,11 +34,6 @@ public class Test : MonoBehaviour
 
 	Vector3 GetRandomPosition()
 	{
-		return new Vector3(Random.Range(0, 10), Random.Range(0, 10), Random.Range(0, 10));
-	}
-
-	void Update()
-	{
-
+		return new Vector3(Random.Range(-10, 10), Random.Range(-10, 10), Random.Range(-10, 10));
 	}
 }

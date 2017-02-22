@@ -8,8 +8,8 @@ namespace Coroutines
 {
 	class CoroutineHolder : MonoBehaviour
 	{
-		HashSet<IEnumerator> superFastCoroutines 
-			= new HashSet<IEnumerator>();
+		List<IEnumerator> superFastCoroutines 
+			= new List<IEnumerator>();
 
 		public void AddSuperFastCoroutine(IEnumerator coroutine)
 		{
@@ -18,12 +18,7 @@ namespace Coroutines
 
 		void Update()
 		{
-			foreach(var coroutine in this.superFastCoroutines.ToArray())
-				if (!coroutine.MoveNext())
-					this.superFastCoroutines.Remove(coroutine);
-				else
-					if (coroutine.Current != null)
-						throw new NotSupportedException("Super fast coroutines must return only null.");
+			this.superFastCoroutines.RemoveAll(o => !o.MoveNext());
 		}
 	}
 }

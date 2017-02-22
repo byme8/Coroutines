@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using Coroutines;
 using Tweens.Data;
@@ -6,7 +5,7 @@ using UnityEngine;
 
 namespace Tweens
 {
-	public static class MoveTween
+    public static class MoveTween
 	{
 		public static CoroutineTask Move(this GameObject gameObject,
 				Vector3 position,
@@ -38,7 +37,6 @@ namespace Tweens
 			if (curve == null)
 				curve = Curves.BackIn;
 
-
 			var timeSpent = 0.0f;
 			while (timeSpent < delay)
 			{
@@ -55,7 +53,6 @@ namespace Tweens
 				var currentValue = start + delta * shift;
 				transform.position = currentValue;
 				timeSpent += UnityEngine.Time.deltaTime;
-
 				yield return null;
 			}
 
