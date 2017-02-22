@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Coroutines;
 using Tweens.Data;
 using UnityEngine;
 
@@ -15,12 +16,9 @@ namespace Tweens
 		{
 			var awaiter = new CoroutineTask();
 			var transform = gameObject.transform;
-			var start = transform.position;
-			var delta = position - start;
-			Coroutines.Coroutines.StartSuperFastCoroutine(() => ProcessTween<Vector3>(
-				() => transform.position,
-				(o) => transform.position = o,
-				(shift) => start + delta * shift,
+
+			Coroutines.Coroutines.StartSuperFastCoroutine(() => ProcessTween(
+				transform,
 				position,
 				time,
 				delay,
@@ -29,11 +27,9 @@ namespace Tweens
 			return awaiter;
 		}
 
-		private static IEnumerator ProcessTween<TValue>(
-			Func<TValue> getValue,
-			Action<TValue> setValue,
-			Func<float, TValue> calculateValue,
-			TValue resultValue,
+		private static IEnumerator ProcessTween(
+			Transform transform,
+			Vector3 position,
 			float time,
 			float delay,
 			Curve curve,
@@ -41,6 +37,7 @@ namespace Tweens
 		{
 			if (curve == null)
 				curve = Curves.BackIn;
+
 
 			var timeSpent = 0.0f;
 			while (timeSpent < delay)
@@ -50,12 +47,13 @@ namespace Tweens
 			}
 
 			timeSpent = 0.0f;
-			var startValue = getValue();
+			var start = transform.position;
+			var delta = position - start;
 			while (timeSpent < time)
 			{
 				var shift = curve.Caclculate(timeSpent / time);
-				var currentValue = calculateValue(shift);
-				setValue(currentValue);
+				var currentValue = start + delta * shift;
+				transform.position = currentValue;
 				timeSpent += UnityEngine.Time.deltaTime;
 
 				yield return null;

@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Coroutines;
 using Tweens;
 using UnityEngine;
 
@@ -14,10 +16,12 @@ public class Test : MonoBehaviour
 		for (int i = 0; i < count; i++)
 			cubes.Add(GameObject.CreatePrimitive(PrimitiveType.Cube));
 
-		foreach (var cube in cubes)
-			cube.Move(GetRandomPosition(), time, curve: Curves.BackIn);
+		yield return new WaitForSeconds(1);
 
-		yield return new WaitForSeconds(time + 1);
+		yield return cubes.
+			Select(cube => cube.Move(GetRandomPosition(), time)).ToArray().Wait();
+
+		yield return new WaitForSeconds(1);
 
 		foreach (var cube in cubes)
 			cube.Move(Vector3.zero, time, curve: Curves.BackIn);
