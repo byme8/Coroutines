@@ -7,36 +7,20 @@ namespace Tweens
 {
 	public static class MoveTween
 	{
-		public static void Move(this GameObject gameObject,
-			Vector3 position,
-			float time,
-			float delay = 0,
-			Curve curve = null)
-		{
-			var transform = gameObject.transform;
-			Coroutines.Coroutines.StartSuperFastCoroutine(() => ProcessTween<Vector3>(
-				() => transform.position,
-				(o) => transform.position = o,
-				(start, to, shift) => start + (to - start) * shift,
-				position,
-				time,
-				delay,
-				curve,
-				null));
-		}
-
-		public static TweenAwaiter MoveAwaiter(this GameObject gameObject,
+		public static CoroutineTask Move(this GameObject gameObject,
 				Vector3 position,
 				float time,
 				float delay = 0,
 				Curve curve = null)
 		{
-			var awaiter = new TweenAwaiter();
+			var awaiter = new CoroutineTask();
 			var transform = gameObject.transform;
+			var start = transform.position;
+			var delta = position - start;
 			Coroutines.Coroutines.StartSuperFastCoroutine(() => ProcessTween<Vector3>(
 				() => transform.position,
 				(o) => transform.position = o,
-				(start, to, shift) => start + (to - start) * shift,
+				(shift) => start + delta * shift,
 				position,
 				time,
 				delay,
@@ -48,13 +32,16 @@ namespace Tweens
 		private static IEnumerator ProcessTween<TValue>(
 			Func<TValue> getValue,
 			Action<TValue> setValue,
-			Func<TValue, TValue, float, TValue> calculateValue,
+			Func<float, TValue> calculateValue,
 			TValue resultValue,
 			float time,
 			float delay,
 			Curve curve,
-			TweenAwaiter awaiter)
+			CoroutineTask awaiter)
 		{
+			if (curve == null)
+				curve = Curves.BackIn;
+
 			var timeSpent = 0.0f;
 			while (timeSpent < delay)
 			{
@@ -67,7 +54,7 @@ namespace Tweens
 			while (timeSpent < time)
 			{
 				var shift = curve.Caclculate(timeSpent / time);
-				var currentValue = calculateValue(startValue, resultValue, shift);
+				var currentValue = calculateValue(shift);
 				setValue(currentValue);
 				timeSpent += UnityEngine.Time.deltaTime;
 

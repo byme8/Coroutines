@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Tweens
 {
-    public class TweenAwaiter : CustomYieldInstruction
+    public class CoroutineTask : CustomYieldInstruction
     {
         private bool _keepWaiting = true;
 
