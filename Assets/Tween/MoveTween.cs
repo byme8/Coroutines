@@ -1,5 +1,6 @@
 using System.Collections;
 using Coroutines;
+using Coroutines.Abstractions;
 using Tweens.Data;
 using UnityEngine;
 
@@ -7,23 +8,20 @@ namespace Tweens
 {
     public static class MoveTween
 	{
-		public static CoroutineTask Move(this GameObject gameObject,
+		public static ICoroutine Move(this GameObject gameObject,
 				Vector3 position,
 				float time,
 				float delay = 0,
 				Curve curve = null)
 		{
-			var awaiter = new CoroutineTask();
 			var transform = gameObject.transform;
 
-			Coroutines.Coroutines.StartSuperFastCoroutine(() => ProcessTween(
+            return CoroutinesFactory.StartSuperFastCoroutine(ProcessTween(
 				transform,
 				position,
 				time,
 				delay,
-				curve,
-				awaiter));
-			return awaiter;
+				curve));
 		}
 
 		private static IEnumerator ProcessTween(
@@ -31,8 +29,7 @@ namespace Tweens
 			Vector3 position,
 			float time,
 			float delay,
-			Curve curve,
-			CoroutineTask awaiter)
+			Curve curve)
 		{
 			if (curve == null)
 				curve = Curves.BackIn;
@@ -55,9 +52,6 @@ namespace Tweens
 				timeSpent += UnityEngine.Time.deltaTime;
 				yield return null;
 			}
-
-			if (awaiter != null)
-				awaiter.Done();
 		}
 	}
 }

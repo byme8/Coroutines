@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Coroutines;
@@ -8,32 +9,40 @@ using UnityEngine;
 public class Test : MonoBehaviour
 {
 
-	IEnumerator Start()
-	{
-		var time = 50;
-		var count = 1000;
-		var cubes = new List<GameObject>();
-		for (int i = 0; i < count; i++)
-			cubes.Add(GameObject.CreatePrimitive(PrimitiveType.Cube));
+    IEnumerator Start()
+    {
+        var time = 5f;
+        var count = 10000;
+        var wait = new WaitForSeconds(time + 0.1f);
 
-		yield return new WaitForSeconds(1);
+        for (int i = 0; i < count; i++)
+            CoroutinesFactory.StartSuperFastCoroutine(this.Coroutine(time));
+        yield return wait;
+        Debug.Log("1");
 
-		yield return cubes.
-			Select(cube => cube.Move(GetRandomPosition(), time)).Wait();
 
-		yield return new WaitForSeconds(1);
+        for (int i = 0; i < count; i++)
+            CoroutinesFactory.StartCoroutine(this.Coroutine(time));
+        yield return wait;
+        Debug.Log("2");
 
-		foreach (var cube in cubes)
-			cube.Move(Vector3.zero, time, curve: Curves.BackIn);
 
-		yield return new WaitForSeconds(time + 1);
+        for (int i = 0; i < count; i++)
+            this.StartCoroutine(this.Coroutine(time));
+        yield return wait;
+        Debug.Log("3");
+        Application.Quit();
+    }
 
-		foreach (var cube in cubes)
-			GameObject.Destroy(cube);
-	}
+    private IEnumerator Coroutine(float time)
+    {
+        var tempTime = Time.deltaTime + time;
+        while (tempTime > Time.deltaTime)
+            yield return null;
+    }
 
-	Vector3 GetRandomPosition()
-	{
-		return new Vector3(Random.Range(-10, 10), Random.Range(-10, 10), Random.Range(-10, 10));
-	}
+    private IEnumerator Coroutine2(float time)
+    {
+        yield return new WaitWhile(() => Time.time < time);
+    }
 }
