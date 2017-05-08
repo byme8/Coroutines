@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Coroutines.Abstractions
 {
-    public interface ICoroutine
+    public interface ICoroutine  : IEnumerator
     {
         IEnumerator Enumerator
         {

@@ -1,30 +1,22 @@
-using System;
-using System.Collections;
+﻿using System.Collections;
+using Coroutines;
 using Coroutines.Abstractions;
 using UnityEngine;
 
-namespace Coroutines
+public static class Delay
 {
-	public static class CoroutinesFactory
-	{
-		static CoroutineHolder CoroutineHolder;
-
-		static CoroutinesFactory()
-		{
-			var gameObject =  new GameObject("~Coroutines");
-			CoroutineHolder = gameObject.AddComponent<CoroutineHolder>();
-		}
-
-		public static ICoroutine StartSuperFastCoroutine(IEnumerator enumerator)
-		{
-            var coroutine = new CoroutineTask(enumerator);
-			CoroutineHolder.AddSuperFastCoroutine(coroutine);
-			return coroutine;
-		}
-
-        public static Coroutine StartCoroutine(IEnumerator coroutine)
+    public static ICoroutine Create(float delay)
+    {
+        return CoroutinesFactory.StartSuperFastCoroutine(ProcessDelay(delay));
+    }
+    
+    private static IEnumerator ProcessDelay(float delay)
+    {
+        var timeSpent = 0.0f;
+        while (timeSpent < delay)
         {
-            return CoroutineHolder.AddCoroutine(coroutine);
+            timeSpent += Time.deltaTime;
+            yield return null;
         }
     }
 }
